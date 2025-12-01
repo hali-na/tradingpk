@@ -1,0 +1,2 @@
+ohlcv/*.csv filter=lfs diff=lfs merge=lfs -text
+public/ohlcv/*.csv filter=lfs diff=lfs merge=lfs -text
