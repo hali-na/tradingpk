@@ -95,28 +95,26 @@ export function ChallengeLayout({
             userOrders={orders}
             currentTime={currentTime}
             startTime={currentChallenge?.startTime}
-            height={450}
+            height={400}
             paulWeiViewMode={paulWeiViewMode}
             onPaulWeiViewModeChange={setPaulWeiViewMode}
             historyDays={7}
             onPriceChange={handlePriceChange}
           />
-          
-          {/* 播放器 - 固定在K线图底部，不遮挡K线内容 */}
-          <div className="absolute bottom-4 left-4 right-4 z-20 pointer-events-none">
-            <div className="pointer-events-auto">
-              <TimeController
-                currentTime={currentTime}
-                speed={speed}
-                isPaused={isPaused}
-                remainingTime={formatRemainingTime()}
-                progress={getProgress()}
-                onPlay={start}
-                onPause={pause}
-                onSpeedChange={setSpeed}
-              />
-            </div>
-          </div>
+        </div>
+        
+        {/* 播放器 - 独立在K线图下方，不遮挡坐标轴 */}
+        <div className="flex-shrink-0">
+          <TimeController
+            currentTime={currentTime}
+            speed={speed}
+            isPaused={isPaused}
+            remainingTime={formatRemainingTime()}
+            progress={getProgress()}
+            onPlay={start}
+            onPause={pause}
+            onSpeedChange={setSpeed}
+          />
         </div>
       </div>
 
