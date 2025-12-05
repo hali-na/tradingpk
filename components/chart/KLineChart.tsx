@@ -15,97 +15,17 @@ import { UserTrade, UserOrder } from '@/types/trading';
 import { PaulWeiOrder } from '@/lib/data-loader/paulWeiOrdersLoader';
 import { cn } from '@/lib/utils';
 
-// 将 CSS 变量转换为实际颜色值
-function getCSSVariableColor(variable: string, element?: HTMLElement): string {
-  if (typeof window === 'undefined') {
-    return '#888888';
-  }
-
-  const el = element || document.documentElement;
-  // 提取变量名（去掉 var(-- 和 )）
-  const varName = variable.replace(/var\(--/, '').replace(/\)/, '').trim();
-  const value = getComputedStyle(el).getPropertyValue(varName).trim();
-  
-  if (!value) {
-    // 如果无法获取变量值，返回默认颜色
-    return '#888888';
-  }
-  
-  // 如果已经是颜色值格式，直接返回
-  if (value.startsWith('#') || value.startsWith('rgb') || value.startsWith('hsl')) {
-    return value;
-  }
-  
-  // 如果是 HSL 格式（可能是 "210 20% 50%" 或 "210, 20%, 50%"）
-  // 检查是否包含 % 符号（HSL 的特征）
-  if (value.includes('%')) {
-    // 将空格或逗号分隔的值转换为标准 HSL 格式
-    const hslValues = value.replace(/,/g, ' ').split(/\s+/).filter(v => v);
-    if (hslValues.length >= 3) {
-      return `hsl(${hslValues[0]}, ${hslValues[1]}, ${hslValues[2]})`;
-    }
-  }
-  
-  // 如果包含逗号但没有 hsl() 包装，添加包装
-  if (value.includes(',') && !value.includes('hsl(')) {
-    return `hsl(${value})`;
-  }
-  
-  return value;
-}
-
-// 获取主题颜色
+// lightweight-charts 只支持 hex 和 rgb 格式，不支持 hsl
+// 所以我们直接使用 hex 颜色值
 function getThemeColors() {
-  if (typeof window === 'undefined') {
-    return {
-      textColor: '#888888',
-      borderColor: '#333333',
-      primaryColor: '#3b82f6',
-      profitColor: '#10b981', // 绿色 - 上涨
-      lossColor: '#ef4444',  // 红色 - 下跌
-      accentColor: '#8b5cf6',
-    };
-  }
-
-  const root = document.documentElement;
-  
-  // 获取CSS变量值（可能是空格分隔的HSL值）
-  const getHSLValue = (varName: string): string => {
-    const value = getComputedStyle(root).getPropertyValue(varName).trim();
-    if (!value) return '';
-    
-    // 如果已经是完整格式，直接返回
-    if (value.startsWith('hsl(') || value.startsWith('#')) {
-      return value;
-    }
-    
-    // 如果是空格分隔的HSL值（如 "142 76% 36%"），转换为hsl()格式
-    if (value.includes('%')) {
-      const parts = value.replace(/,/g, ' ').split(/\s+/).filter(v => v);
-      if (parts.length >= 3) {
-        return `hsl(${parts[0]}, ${parts[1]}, ${parts[2]})`;
-      }
-    }
-    
-    return value;
-  };
-  
-  // 获取profit和loss颜色，确保是有效的颜色值
-  const profitHSL = getHSLValue('--profit');
-  const lossHSL = getHSLValue('--loss');
-  
-  // 如果解析失败，使用默认的绿色和红色
-  // 确保颜色值是有效的HSL格式或hex格式
-  const profitColor = profitHSL && profitHSL.startsWith('hsl') ? profitHSL : '#10b981'; // 绿色
-  const lossColor = lossHSL && lossHSL.startsWith('hsl') ? lossHSL : '#ef4444';         // 红色
-  
   return {
-    textColor: getCSSVariableColor('var(--muted-foreground)', root) || '#888888',
-    borderColor: getCSSVariableColor('var(--border)', root) || '#333333',
-    primaryColor: getCSSVariableColor('var(--primary)', root) || '#3b82f6',
-    profitColor, // 绿色 - 上涨K线
-    lossColor,   // 红色 - 下跌K线
-    accentColor: getCSSVariableColor('var(--accent)', root) || '#8b5cf6',
+    textColor: '#888888',
+    borderColor: '#333333',
+    primaryColor: '#3b82f6',  // blue
+    profitColor: '#22c55e',   // green - 上涨
+    lossColor: '#ef4444',     // red - 下跌
+    accentColor: '#8b5cf6',   // purple
+    cyanColor: '#06b6d4',     // cyan - 用户交易
   };
 }
 
@@ -239,10 +159,9 @@ export function KLineChart({
       },
     });
 
-    // 确保颜色值是有效的格式 - 使用标准红绿色
-    // lightweight-charts需要有效的颜色值，优先使用HSL格式
-    const upColor = colors.profitColor || 'hsl(142, 76%, 36%)';   // 绿色 - 上涨
-    const downColor = colors.lossColor || 'hsl(0, 84%, 60%)';     // 红色 - 下跌
+    // lightweight-charts 只支持 hex/rgb，使用 hex 颜色
+    const upColor = colors.profitColor;   // 绿色 - 上涨
+    const downColor = colors.lossColor;   // 红色 - 下跌
     
     const candlestickSeries = chart.addCandlestickSeries({
       upColor: upColor,
@@ -457,7 +376,7 @@ export function KLineChart({
           markers.push({
             time,
             position: trade.side === 'Buy' ? 'belowBar' : 'aboveBar',
-            color: 'hsl(190, 80%, 60%)', // Cyan for user's open positions
+            color: colors.cyanColor, // Cyan for user's open positions
             shape: trade.side === 'Buy' ? 'arrowUp' : 'arrowDown',
             text: `我${trade.side === 'Buy' ? '开多' : '开空'}`,
             size: 1,
@@ -665,7 +584,7 @@ export function KLineChart({
     userLimitPrices.forEach((price) => {
       if (!userPriceLinesRef.current.has(price)) {
         const lineSeries = chart.addLineSeries({
-          color: 'hsl(190, 80%, 60%)', // Cyan
+          color: colors.cyanColor, // Cyan
           lineWidth: 1,
           lineStyle: 2,
           lastValueVisible: false,
