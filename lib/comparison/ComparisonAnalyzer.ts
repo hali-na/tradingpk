@@ -20,6 +20,13 @@ export class ComparisonAnalyzerImpl implements ComparisonAnalyzer {
   private maxDrawdownCalc = new MaxDrawdownCalculatorImpl();
   private metricsCalc = new MetricsCalculator();
 
+  /**
+   * 初始化分析器（加载 wallet history）
+   */
+  async initialize(): Promise<void> {
+    await this.paulWeiPnLCalc.loadWalletHistory();
+  }
+
   calculateMetrics(
     userAccount: UserAccount,
     paulWeiTrades: PaulWeiTrade[],

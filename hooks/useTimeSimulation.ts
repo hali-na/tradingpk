@@ -18,37 +18,18 @@ export function useTimeSimulation() {
     destroy,
   } = useTimeSimulationStore();
 
-  const { checkOrderTriggers, updateCurrentPrice } = useTradingStore();
-  const { getCurrentOHLCV, currentTimeframe } = useChallengeStore();
+  const { checkOrderTriggers, currentPrice } = useTradingStore();
 
-  // 根据当前模拟时间获取价格
-  const getCurrentPrice = useCallback(() => {
-    if (!state) return 0;
-    
-    const ohlcv = getCurrentOHLCV();
-    const currentTime = new Date(state.currentTime).getTime();
-    
-    // 找到当前时间对应的 K 线
-    for (let i = ohlcv.length - 1; i >= 0; i--) {
-      const candleTime = new Date(ohlcv[i].timestamp).getTime();
-      if (candleTime <= currentTime) {
-        return ohlcv[i].close;
-      }
-    }
-    
-    return ohlcv[0]?.close || 0;
-  }, [state, getCurrentOHLCV]);
-
-  // 时间更新时的处理
+  // 当前价格现在由K线图组件通过onPriceChange回调更新（单一数据源）
+  // 这里只需要在时间变化时检查订单触发
   useEffect(() => {
     if (!engine || !state) return;
 
-    const price = getCurrentPrice();
-    if (price > 0) {
-      updateCurrentPrice(price);
+    // 价格由K线图组件更新，这里只检查订单触发
+    if (currentPrice > 0) {
       checkOrderTriggers(state.currentTime);
     }
-  }, [state?.currentTime, engine, getCurrentPrice, updateCurrentPrice, checkOrderTriggers]);
+  }, [state?.currentTime, engine, currentPrice, checkOrderTriggers]);
 
   // 计算剩余时间
   const getRemainingTime = useCallback(() => {
@@ -104,7 +85,6 @@ export function useTimeSimulation() {
     destroy,
     
     // Computed
-    getCurrentPrice,
     getRemainingTime,
     getProgress,
     formatRemainingTime,

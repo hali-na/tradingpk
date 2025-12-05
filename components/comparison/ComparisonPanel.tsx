@@ -10,11 +10,11 @@ interface ComparisonPanelProps {
 export function ComparisonPanel({ metrics, isLoading }: ComparisonPanelProps) {
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="text-lg font-semibold mb-4">实时对比</h3>
+      <div className="glass-card border-2 border-primary/30 rounded-xl shadow-lg p-4 backdrop-blur-xl">
+        <h3 className="text-lg font-bold mb-4 text-primary" style={{ textShadow: '0 0 10px hsl(var(--primary)/0.5)' }}>实时对比</h3>
         <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-primary/20 rounded w-3/4"></div>
+          <div className="h-4 bg-primary/20 rounded w-1/2"></div>
         </div>
       </div>
     );
@@ -22,9 +22,9 @@ export function ComparisonPanel({ metrics, isLoading }: ComparisonPanelProps) {
 
   if (!metrics) {
     return (
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="text-lg font-semibold mb-4">实时对比</h3>
-        <p className="text-gray-500 text-sm">等待交易数据...</p>
+      <div className="glass-card border-2 border-primary/30 rounded-xl shadow-lg p-4 backdrop-blur-xl">
+        <h3 className="text-lg font-bold mb-4 text-primary" style={{ textShadow: '0 0 10px hsl(var(--primary)/0.5)' }}>实时对比</h3>
+        <p className="text-muted-foreground text-sm">等待交易数据...</p>
       </div>
     );
   }
@@ -33,30 +33,32 @@ export function ComparisonPanel({ metrics, isLoading }: ComparisonPanelProps) {
   const isTie = Math.abs(metrics.returnDiff) < 0.01;
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h3 className="text-lg font-semibold mb-4">实时对比</h3>
+    <div className="glass-card border-2 border-primary/30 rounded-xl shadow-lg p-4 backdrop-blur-xl">
+      <h3 className="text-lg font-bold mb-4 text-primary" style={{ textShadow: '0 0 10px hsl(var(--primary)/0.5)' }}>实时对比</h3>
 
       {/* 收益率对比 */}
       <div className="mb-6">
         <div className="flex justify-between items-end mb-2">
           <div className="text-center flex-1">
-            <div className="text-sm text-gray-500">你的收益率</div>
+            <div className="text-sm text-muted-foreground font-medium mb-1">你的收益率</div>
             <div
-              className={`text-2xl font-bold ${
-                metrics.userReturn >= 0 ? 'text-green-600' : 'text-red-600'
+              className={`text-2xl font-bold font-mono ${
+                metrics.userReturn >= 0 ? 'text-profit' : 'text-loss'
               }`}
+              style={{ textShadow: metrics.userReturn >= 0 ? '0 0 10px hsl(var(--profit)/0.5)' : '0 0 10px hsl(var(--loss)/0.5)' }}
             >
               {metrics.userReturn >= 0 ? '+' : ''}
               {metrics.userReturn.toFixed(2)}%
             </div>
           </div>
-          <div className="text-gray-400 text-xl px-4">VS</div>
+          <div className="text-primary/60 text-xl px-4 font-bold">VS</div>
           <div className="text-center flex-1">
-            <div className="text-sm text-gray-500">paul wei</div>
+            <div className="text-sm text-muted-foreground font-medium mb-1">paul wei</div>
             <div
-              className={`text-2xl font-bold ${
-                metrics.paulWeiReturn >= 0 ? 'text-green-600' : 'text-red-600'
+              className={`text-2xl font-bold font-mono ${
+                metrics.paulWeiReturn >= 0 ? 'text-profit' : 'text-loss'
               }`}
+              style={{ textShadow: metrics.paulWeiReturn >= 0 ? '0 0 10px hsl(var(--profit)/0.5)' : '0 0 10px hsl(var(--loss)/0.5)' }}
             >
               {metrics.paulWeiReturn >= 0 ? '+' : ''}
               {metrics.paulWeiReturn.toFixed(2)}%
@@ -66,13 +68,14 @@ export function ComparisonPanel({ metrics, isLoading }: ComparisonPanelProps) {
 
         {/* 差距 */}
         <div
-          className={`text-center py-2 rounded-lg ${
+          className={`text-center py-2 rounded-lg font-bold ${
             isTie
-              ? 'bg-gray-100 text-gray-600'
+              ? 'bg-background/50 text-muted-foreground border border-primary/20'
               : isWinning
-              ? 'bg-green-100 text-green-700'
-              : 'bg-red-100 text-red-700'
+              ? 'bg-profit/20 text-profit border-2 border-profit/50'
+              : 'bg-loss/20 text-loss border-2 border-loss/50'
           }`}
+          style={isWinning ? { boxShadow: '0 0 15px hsl(var(--profit)/0.3)' } : isTie ? {} : { boxShadow: '0 0 15px hsl(var(--loss)/0.3)' }}
         >
           {isTie ? (
             '平局'
@@ -126,12 +129,12 @@ function MetricRow({
   paulWeiValue: string;
 }) {
   return (
-    <div className="flex justify-between">
-      <span className="text-gray-500">{label}</span>
+    <div className="flex justify-between py-1.5 border-b border-primary/10 last:border-0">
+      <span className="text-muted-foreground font-medium">{label}</span>
       <div className="flex gap-4">
-        <span className="text-blue-600 font-mono">{userValue}</span>
-        <span className="text-gray-400">/</span>
-        <span className="text-orange-600 font-mono">{paulWeiValue}</span>
+        <span className="text-primary font-mono font-semibold">{userValue}</span>
+        <span className="text-primary/40">/</span>
+        <span className="text-accent font-mono font-semibold">{paulWeiValue}</span>
       </div>
     </div>
   );

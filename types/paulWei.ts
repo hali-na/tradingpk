@@ -31,3 +31,20 @@ export interface PaulWeiExecution {
   text: string;
 }
 
+export interface PaulWeiOrder {
+  orderID: string;
+  symbol: Symbol;
+  side: 'Buy' | 'Sell';
+  ordType: 'Limit' | 'Market' | 'Stop';
+  orderQty: number;
+  price?: number;
+  stopPx?: number;
+  avgPx?: number;
+  cumQty: number;
+  ordStatus: 'Pending' | 'Filled' | 'Canceled' | 'PartiallyFilled';
+  timestamp: string;
+  text: string;
+  executions: PaulWeiExecution[];
+}
+
+

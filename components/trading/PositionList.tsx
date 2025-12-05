@@ -1,7 +1,11 @@
 'use client';
 
 import { UserPosition } from '@/types/trading';
-import { Button } from '../common/Button';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 interface PositionListProps {
   positions: UserPosition[];
@@ -10,85 +14,95 @@ interface PositionListProps {
 }
 
 export function PositionList({ positions, onClosePosition, onCloseAll }: PositionListProps) {
-  if (positions.length === 0) {
-    return (
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="text-lg font-semibold mb-4">持仓</h3>
-        <p className="text-gray-500 text-sm">暂无持仓</p>
-      </div>
-    );
-  }
-
   const totalPnl = positions.reduce((sum, pos) => sum + pos.unrealizedPnl, 0);
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">持仓</h3>
-        <Button variant="danger" size="sm" onClick={onCloseAll}>
-          全部平仓
-        </Button>
-      </div>
-
-      <div className="space-y-3">
-        {positions.map((position) => (
-          <div
-            key={position.id}
-            className="border rounded-lg p-3 flex items-center justify-between"
-          >
-            <div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`px-2 py-0.5 text-xs rounded ${
-                    position.side === 'Long'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-red-100 text-red-700'
-                  }`}
-                >
-                  {position.side === 'Long' ? '多' : '空'}
-                </span>
-                <span className="font-mono text-sm">
-                  {position.quantity.toLocaleString()} USD
-                </span>
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                开仓价: ${position.entryPrice.toLocaleString()}
-              </div>
-            </div>
-            <div className="text-right">
+    <Card glass>
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base text-foreground">持仓</CardTitle>
+          {positions.length > 0 && (
+            <Button variant="destructive" size="sm" onClick={onCloseAll} className="h-8 shadow-[0_0_10px_hsl(var(--destructive))] hover:shadow-[0_0_15px_hsl(var(--destructive))]">
+              全部平仓
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {positions.length === 0 ? (
+          <div className="text-center py-6">
+            <p className="text-3xl mb-2">🛰️</p>
+            <p className="text-sm text-muted-foreground">暂无持仓</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {positions.map((position) => (
               <div
-                className={`font-mono font-semibold ${
-                  position.unrealizedPnl >= 0 ? 'text-green-600' : 'text-red-600'
-                }`}
+                key={position.id}
+                className={cn(
+                  'rounded-lg p-3 glass border-2',
+                  position.side === 'Long'
+                    ? 'border-profit/50'
+                    : 'border-loss/50'
+                )}
               >
-                {position.unrealizedPnl >= 0 ? '+' : ''}
-                ${position.unrealizedPnl.toFixed(2)}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <Badge variant={position.side === 'Long' ? 'long' : 'short'} className="shadow-none w-12 justify-center">
+                        {position.side === 'Long' ? '多' : '空'}
+                      </Badge>
+                      <span className="font-mono text-sm font-semibold text-foreground">
+                        {position.quantity.toLocaleString()} USD
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground font-mono">
+                      开仓 @ ${position.entryPrice.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="text-right space-y-1">
+                    <p
+                      className={cn(
+                        'font-mono font-semibold text-lg tabular-nums',
+                        position.unrealizedPnl >= 0 ? 'text-profit' : 'text-loss'
+                      )}
+                      style={{
+                        filter: `drop-shadow(0 0 5px hsl(var(--${position.unrealizedPnl >= 0 ? 'profit' : 'loss'})))`
+                      }}
+                    >
+                      {position.unrealizedPnl >= 0 ? '+' : ''}
+                      {position.unrealizedPnl.toFixed(2)}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onClosePosition(position.id)}
+                      className="h-7 text-xs text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                    >
+                      平仓
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onClosePosition(position.id)}
-                className="mt-1"
+            ))}
+
+            <div className="pt-3 border-t border-border/50 flex justify-between items-center">
+              <span className="text-sm text-foreground">总浮动盈亏</span>
+              <span
+                className={cn(
+                  'font-mono font-semibold text-lg tabular-nums',
+                  totalPnl >= 0 ? 'text-profit' : 'text-loss'
+                )}
+                 style={{
+                  filter: `drop-shadow(0 0 8px hsl(var(--${totalPnl >= 0 ? 'profit' : 'loss'})))`
+                }}
               >
-                平仓
-              </Button>
+                {totalPnl >= 0 ? '+' : ''}{totalPnl.toFixed(2)}
+              </span>
             </div>
           </div>
-        ))}
-      </div>
-
-      <div className="mt-4 pt-3 border-t">
-        <div className="flex justify-between">
-          <span className="text-gray-600">总浮动盈亏:</span>
-          <span
-            className={`font-mono font-semibold ${
-              totalPnl >= 0 ? 'text-green-600' : 'text-red-600'
-            }`}
-          >
-            {totalPnl >= 0 ? '+' : ''}${totalPnl.toFixed(2)}
-          </span>
-        </div>
-      </div>
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

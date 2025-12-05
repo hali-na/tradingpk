@@ -105,6 +105,21 @@ export function useTrading() {
     return orders.filter((o) => o.status === 'Pending').length;
   }, [getOrders]);
 
+  // 包装closePosition和closeAllPositions以支持timestamp
+  const closePositionWithTime = useCallback(
+    (positionId: string, timestamp?: string) => {
+      return closePosition(positionId, timestamp);
+    },
+    [closePosition]
+  );
+
+  const closeAllPositionsWithTime = useCallback(
+    (timestamp?: string) => {
+      return closeAllPositions(timestamp);
+    },
+    [closeAllPositions]
+  );
+
   return {
     // State
     isInitialized: !!engine,
@@ -122,8 +137,8 @@ export function useTrading() {
     openLong,
     openShort,
     cancelOrder,
-    closePosition,
-    closeAllPositions,
+    closePosition: closePositionWithTime,
+    closeAllPositions: closeAllPositionsWithTime,
     updateCurrentPrice,
     reset,
     

@@ -13,12 +13,12 @@ interface TradingStore {
   
   // Actions
   initEngine: (config: TradingEngineConfig) => void;
-  placeMarketOrder: (side: Side, quantity: number) => OrderExecutionResult;
-  placeLimitOrder: (side: Side, quantity: number, price: number) => OrderExecutionResult;
-  placeStopOrder: (side: Side, quantity: number, triggerPrice: number) => OrderExecutionResult;
+  placeMarketOrder: (side: Side, quantity: number, timestamp?: string) => OrderExecutionResult;
+  placeLimitOrder: (side: Side, quantity: number, price: number, timestamp?: string) => OrderExecutionResult;
+  placeStopOrder: (side: Side, quantity: number, triggerPrice: number, timestamp?: string) => OrderExecutionResult;
   cancelOrder: (orderId: string) => boolean;
-  closePosition: (positionId: string) => OrderExecutionResult;
-  closeAllPositions: () => OrderExecutionResult[];
+  closePosition: (positionId: string, timestamp?: string) => OrderExecutionResult;
+  closeAllPositions: (timestamp?: string) => OrderExecutionResult[];
   checkOrderTriggers: (currentTime: string) => UserTrade[];
   updateCurrentPrice: (price: number) => void;
   updateAccount: () => void;
@@ -50,7 +50,12 @@ export const useTradingStore = create<TradingStore>((set, get) => ({
     if (!engine) {
       return { success: false, error: '交易引擎未初始化' };
     }
-    const result = engine.placeMarketOrder(side, quantity, currentPrice, timestamp);
+    // 使用K线图组件更新的currentPrice（单一数据源）
+    const price = currentPrice;
+    if (price <= 0) {
+      return { success: false, error: '无法获取当前价格' };
+    }
+    const result = engine.placeMarketOrder(side, quantity, price, timestamp);
     get().updateAccount();
     return result;
   },
@@ -88,7 +93,11 @@ export const useTradingStore = create<TradingStore>((set, get) => ({
     if (!engine) {
       return { success: false, error: '交易引擎未初始化' };
     }
-    const result = engine.closePosition(positionId, currentPrice, timestamp);
+    const price = currentPrice;
+    if (price <= 0) {
+      return { success: false, error: '无法获取当前价格' };
+    }
+    const result = engine.closePosition(positionId, price, timestamp);
     get().updateAccount();
     return result;
   },
@@ -96,7 +105,9 @@ export const useTradingStore = create<TradingStore>((set, get) => ({
   closeAllPositions: (timestamp?: string) => {
     const { engine, currentPrice } = get();
     if (!engine) return [];
-    const results = engine.closeAllPositions(currentPrice, timestamp);
+    const price = currentPrice;
+    if (price <= 0) return [];
+    const results = engine.closeAllPositions(price, timestamp);
     get().updateAccount();
     return results;
   },
@@ -104,7 +115,9 @@ export const useTradingStore = create<TradingStore>((set, get) => ({
   checkOrderTriggers: (currentTime: string) => {
     const { engine, currentPrice } = get();
     if (!engine) return [];
-    const trades = engine.checkOrderTriggers(currentPrice, currentTime);
+    const price = currentPrice;
+    if (price <= 0) return [];
+    const trades = engine.checkOrderTriggers(price, currentTime);
     if (trades.length > 0) {
       get().updateAccount();
     }
@@ -161,6 +174,7 @@ export const useTradingStore = create<TradingStore>((set, get) => ({
 
   getEquity: () => {
     const { engine, currentPrice } = get();
-    return engine?.getEquity(currentPrice) || 0;
+    const price = currentPrice;
+    return engine?.getEquity(price) || 0;
   },
 }));

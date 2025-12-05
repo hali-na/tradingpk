@@ -27,3 +27,13 @@ export function createFeeCalculator() {
 export function createMaxDrawdownCalculator() {
   return new MaxDrawdownCalculatorImpl();
 }
+
+// 单例实例
+let paulWeiPnLCalculatorInstance: PaulWeiPnLCalculator | null = null;
+
+export function getPaulWeiPnLCalculator(): PaulWeiPnLCalculator {
+  if (!paulWeiPnLCalculatorInstance) {
+    paulWeiPnLCalculatorInstance = new PaulWeiPnLCalculator();
+  }
+  return paulWeiPnLCalculatorInstance;
+}

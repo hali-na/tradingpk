@@ -13,24 +13,25 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-muted-foreground mb-1.5">
             {label}
           </label>
         )}
         <select
           ref={ref}
-          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${
-            error ? 'border-red-500' : 'border-gray-300'
-          } ${className}`}
+          className={`w-full px-3 py-2 glass rounded-lg border-2 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 ${
+            error ? 'border-loss text-loss' : 'border-primary/20 text-foreground'
+          } bg-background/30 backdrop-blur-sm ${className}`}
+          style={error ? {} : { boxShadow: '0 0 5px hsl(var(--primary)/0.1)' }}
           {...props}
         >
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} className="bg-background text-foreground">
               {option.label}
             </option>
           ))}
         </select>
-        {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+        {error && <p className="mt-1 text-sm text-loss">{error}</p>}
       </div>
     );
   }

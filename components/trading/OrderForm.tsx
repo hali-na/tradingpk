@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Side, OrderType, Symbol } from '@/types/common';
-import { Button } from '../common/Button';
+import { Button } from '@/components/ui/button';
 import { Input } from '../common/Input';
 import { Select } from '../common/Select';
 
@@ -48,44 +48,50 @@ export function OrderForm({ currentPrice, balance, symbol, onPlaceOrder }: Order
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h3 className="text-lg font-semibold mb-4">下单</h3>
+    <div className="glass-card border-2 border-primary/30 rounded-xl shadow-lg p-4 backdrop-blur-xl">
+      <h3 className="text-lg font-bold mb-4 text-primary" style={{ textShadow: '0 0 10px hsl(var(--primary)/0.5)' }}>下单</h3>
 
       {/* 当前价格和余额 */}
       <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-        <div>
-          <span className="text-gray-500">当前价格:</span>
-          <span className="ml-2 font-mono font-semibold">
+        <div className="glass rounded-lg p-2 border border-primary/20">
+          <span className="text-muted-foreground text-xs font-medium">当前价格:</span>
+          <div className="font-mono font-bold text-primary text-base mt-0.5" style={{ textShadow: '0 0 5px hsl(var(--primary)/0.5)' }}>
             ${currentPrice.toLocaleString()}
-          </span>
+          </div>
         </div>
-        <div>
-          <span className="text-gray-500">可用余额:</span>
-          <span className="ml-2 font-mono font-semibold">
+        <div className="glass rounded-lg p-2 border border-accent/20">
+          <span className="text-muted-foreground text-xs font-medium">可用余额:</span>
+          <div className="font-mono font-bold text-accent text-base mt-0.5" style={{ textShadow: '0 0 5px hsl(var(--accent)/0.5)' }}>
             ${balance.toLocaleString()}
-          </span>
+          </div>
         </div>
       </div>
 
       {/* 快速下单按钮 */}
       <div className="grid grid-cols-2 gap-2 mb-4">
         <Button
-          variant="success"
+          variant="buy"
           onClick={() => handleQuickOrder('Buy')}
-          className="w-full"
+          className="w-full h-14 shadow-[0_0_16px_hsl(var(--profit)/0.45)]"
         >
-          开多 / 买入
+          <span className="flex flex-col items-center leading-tight">
+            <span className="text-base font-semibold">快速买入</span>
+            <span className="text-xs opacity-80">市价立即成交</span>
+          </span>
         </Button>
         <Button
-          variant="danger"
+          variant="sell"
           onClick={() => handleQuickOrder('Sell')}
-          className="w-full"
+          className="w-full h-14 shadow-[0_0_16px_hsl(var(--loss)/0.45)]"
         >
-          开空 / 卖出
+          <span className="flex flex-col items-center leading-tight">
+            <span className="text-base font-semibold">快速卖出</span>
+            <span className="text-xs opacity-80">市价立即成交</span>
+          </span>
         </Button>
       </div>
 
-      <hr className="my-4" />
+      <div className="border-t border-primary/20 my-4"></div>
 
       {/* 详细下单表单 */}
       <div className="space-y-3">
@@ -118,11 +124,11 @@ export function OrderForm({ currentPrice, balance, symbol, onPlaceOrder }: Order
           onChange={(e) => setQuantity(e.target.value)}
           placeholder="例如 100 = 100 张合约"
         />
-        <div className="flex justify-between text-xs text-gray-500">
-          <span>
+        <div className="flex justify-between text-xs text-muted-foreground bg-background/30 rounded-lg p-2 border border-primary/10">
+          <span className="font-medium">
             合约说明：当前为 {symbol || 'XBTUSD'} 反向永续，1 张 ≈ 1 USD 名义价值
           </span>
-          <span className="font-mono">
+          <span className="font-mono text-primary font-semibold">
             ≈{' '}
             {(() => {
               const qty = parseFloat(quantity);
@@ -142,8 +148,12 @@ export function OrderForm({ currentPrice, balance, symbol, onPlaceOrder }: Order
           />
         )}
 
-        <Button onClick={handleSubmit} className="w-full">
-          下单
+        <Button
+          onClick={handleSubmit}
+          className="w-full h-12 text-base shadow-[0_0_18px_hsl(var(--primary)/0.45)]"
+          variant={side === 'Buy' ? 'buy' : 'sell'}
+        >
+          {side === 'Buy' ? '提交买入订单' : '提交卖出订单'}
         </Button>
       </div>
     </div>

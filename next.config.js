@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // 明确指定构建根目录，避免 Next 误判到上级 /Users/hailie/package-lock.json
+  // 导致 public/ 下的 CSV / 图片无法被正确访问
+  outputFileTracingRoot: __dirname,
   // 开发环境：暂时移除 CSP 限制，避免阻止路由跳转
   // 生产环境可以重新启用更严格的 CSP
   // async headers() {

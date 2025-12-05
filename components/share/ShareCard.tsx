@@ -28,11 +28,21 @@ export function ShareCard({ result, onDownload }: ShareCardProps) {
   };
 
   const handleDownload = async () => {
-    // 实际实现需要使用 html2canvas 或类似库
-    if (onDownload) {
-      onDownload();
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const element = cardRef.current;
+      if (!element) return;
+      const canvas = await html2canvas(element);
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = 'tradingpk-share.png';
+      link.click();
+      if (onDownload) onDownload();
+    } catch (error) {
+      console.error('分享卡片导出失败', error);
+      alert('请安装 html2canvas 后再试：npm install html2canvas');
     }
-    alert('下载功能需要安装 html2canvas 库');
   };
 
   const handleShare = () => {

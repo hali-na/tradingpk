@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Symbol } from '@/types/common';
 import { ChallengeSelector } from '@/components/challenge/ChallengeSelector';
 import { Card, CardTitle } from '@/components/common/Card';
@@ -48,91 +49,58 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* 标题区域 */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            TradingPK
+    <div className="min-h-screen p-8 flex items-center justify-center">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        {/* Hero Section */}
+        <div className="space-y-6">
+          {/* Profile Image */}
+          <div className="mb-6">
+            <Image
+              src="/截屏2025-12-04 01.31.15.png"
+              alt="Profile"
+              width={400}
+              height={120}
+              className="rounded-lg shadow-lg border border-primary/20"
+              priority
+            />
+          </div>
+          <h1 className="text-6xl font-bold text-foreground leading-tight" style={{ textShadow: '0 0 15px hsl(var(--primary)/0.5)' }}>
+            挑战传奇
+            <br />
+            <span className="text-primary">复盘经典</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-2">
-            PK 顶级交易员 paul wei
+          <p className="text-xl text-muted-foreground max-w-lg">
+            在 <span className="text-primary font-semibold">TradingPK</span>，你将直面传奇交易员 Paul Wei。我们为你复刻了真实历史行情，让你可以在相同的市场环境下，与顶级高手进行公平对决。
           </p>
-          <p className="text-gray-500">
-            选择历史时间段，在相同的市场环境下进行模拟交易，对比双方的交易表现
-          </p>
+          <div className="flex gap-4 pt-4">
+            <div className="p-4 rounded-lg glass-card border-l-4 border-primary">
+              <p className="text-3xl font-bold font-mono">100+</p>
+              <p className="text-sm text-muted-foreground">经典战役</p>
+            </div>
+            <div className="p-4 rounded-lg glass-card border-l-4 border-cyan-400">
+              <p className="text-3xl font-bold font-mono">10M+</p>
+              <p className="text-sm text-muted-foreground">模拟成交额</p>
+            </div>
+          </div>
         </div>
 
-        {/* 错误提示 */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            {error}
-          </div>
-        )}
-
-        {/* 挑战选择器 */}
-        <div className="grid md:grid-cols-2 gap-8">
+        {/* Challenge Selector Section */}
+        <div className="w-full">
           <ChallengeSelector
             onCreateChallenge={handleCreateChallenge}
             isLoading={isLoading}
           />
-
-          {/* 游戏说明 */}
-          <Card padding="lg">
-            <CardTitle>游戏规则</CardTitle>
-            <div className="mt-4 space-y-4 text-sm text-gray-600">
-              <div className="flex gap-3">
-                <span className="text-2xl">🎯</span>
-                <div>
-                  <p className="font-medium text-gray-800">选择时间段</p>
-                  <p>选择包含 paul wei 交易记录的历史时间段</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-2xl">📈</span>
-                <div>
-                  <p className="font-medium text-gray-800">模拟交易</p>
-                  <p>在相同的市场环境下进行模拟交易，支持时间加速</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-2xl">⚖️</span>
-                <div>
-                  <p className="font-medium text-gray-800">公平对比</p>
-                  <p>双方使用相同的初始资金($10,000)和手续费率</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-2xl">🏆</span>
-                <div>
-                  <p className="font-medium text-gray-800">查看结果</p>
-                  <p>挑战结束后对比收益率，生成分享卡片</p>
-                </div>
-              </div>
-            </div>
-          </Card>
         </div>
 
-        {/* 特色功能 */}
-        <div className="mt-12 grid grid-cols-3 gap-6 text-center">
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-3xl mb-2">⏱️</div>
-            <h3 className="font-semibold mb-1">时间加速</h3>
-            <p className="text-sm text-gray-500">1x ~ 100x 速度控制</p>
+        {/* Error message handling */}
+        {error && (
+          <div className="md:col-span-2 mt-6 p-4 bg-destructive/20 border border-destructive/50 rounded-lg text-destructive-foreground">
+            {error}
           </div>
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-3xl mb-2">📊</div>
-            <h3 className="font-semibold mb-1">多周期K线</h3>
-            <p className="text-sm text-gray-500">1m/5m/1h/1d 自由切换</p>
-          </div>
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-3xl mb-2">🎨</div>
-            <h3 className="font-semibold mb-1">分享卡片</h3>
-            <p className="text-sm text-gray-500">精美结果图一键分享</p>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
+
 }
 

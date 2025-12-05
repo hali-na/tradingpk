@@ -11,6 +11,13 @@ export interface UserTrade {
   quantity: number;
   orderType: OrderType;
   fee: number; // 手续费
+  // 开仓/平仓相关信息
+  positionId?: string; // 关联的持仓ID（如果是开仓交易）
+  isOpen: boolean; // 是否为开仓交易（true=开仓, false=平仓）
+  entryPrice?: number; // 开仓价格（仅平仓交易有）
+  exitPrice?: number; // 平仓价格（仅平仓交易有）
+  pnl?: number; // 盈亏（仅平仓交易有，已扣除手续费）
+  pnlBeforeFee?: number; // 盈亏（平仓交易，未扣除手续费前）
 }
 
 export interface UserPosition {

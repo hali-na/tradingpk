@@ -53,17 +53,22 @@ export class TradingEngineImpl implements TradingEngine {
 
     // 创建交易记录（使用模拟时间，如果提供的话）
     const tradeTime = timestamp ?? new Date().toISOString();
+    
+    // 更新持仓 - 使用实际执行价格作为 entryPrice
+    const positionId = this.updatePositionOnTrade(side, quantity, executedPrice, tradeTime);
+    
     const trade = this.createTrade(
       side,
       quantity,
       executedPrice,
       'Market',
       fee,
-      tradeTime
+      tradeTime,
+      {
+        isOpen: true,
+        positionId: positionId,
+      }
     );
-
-    // 更新持仓 - 使用实际执行价格作为 entryPrice
-    this.updatePositionOnTrade(side, quantity, executedPrice, tradeTime);
     
     // 调试日志：确认 entryPrice 正确设置
     if (process.env.NODE_ENV === 'development') {
@@ -146,8 +151,13 @@ export class TradingEngineImpl implements TradingEngine {
       return { success: false, error: '平仓失败' };
     }
 
+    // 计算盈亏（手续费前）
+    const pnlBeforeFee = result.pnl;
+    // 扣除手续费后的实际盈亏
+    const pnl = pnlBeforeFee - fee;
+
     // 更新余额
-    this.balance += result.pnl - fee;
+    this.balance += pnl;
 
     // 创建交易记录（使用模拟时间，如果提供的话）
     const tradeTime = timestamp ?? new Date().toISOString();
@@ -157,7 +167,15 @@ export class TradingEngineImpl implements TradingEngine {
       executedPrice,
       'Market',
       fee,
-      tradeTime
+      tradeTime,
+      {
+        isOpen: false,
+        positionId: position.id,
+        entryPrice: position.entryPrice,
+        exitPrice: executedPrice,
+        pnl: pnl,
+        pnlBeforeFee: pnlBeforeFee,
+      }
     );
 
     return { success: true, trade };
@@ -239,6 +257,9 @@ export class TradingEngineImpl implements TradingEngine {
       // 计算手续费
       const fee = this.calculateFee(order.quantity, executedPrice, feeType);
 
+      // 更新持仓 - 使用实际执行价格作为 entryPrice
+      const positionId = this.updatePositionOnTrade(order.side, order.quantity, executedPrice, currentTime);
+
       // 创建交易记录
       const trade = this.createTrade(
         order.side,
@@ -246,11 +267,12 @@ export class TradingEngineImpl implements TradingEngine {
         executedPrice,
         order.type,
         fee,
-        currentTime
+        currentTime,
+        {
+          isOpen: true,
+          positionId: positionId,
+        }
       );
-
-      // 更新持仓 - 使用实际执行价格作为 entryPrice
-      this.updatePositionOnTrade(order.side, order.quantity, executedPrice, currentTime);
       
       // 调试日志：确认 entryPrice 正确设置
       if (process.env.NODE_ENV === 'development') {
@@ -291,7 +313,15 @@ export class TradingEngineImpl implements TradingEngine {
     price: number,
     orderType: 'Market' | 'Limit' | 'Stop',
     fee: number,
-    timestamp: string
+    timestamp: string,
+    extras?: {
+      isOpen: boolean;
+      positionId?: string;
+      entryPrice?: number;
+      exitPrice?: number;
+      pnl?: number;
+      pnlBeforeFee?: number;
+    }
   ): UserTrade {
     const trade: UserTrade = {
       id: `trade_${++this.tradeCounter}_${Date.now()}`,
@@ -302,6 +332,12 @@ export class TradingEngineImpl implements TradingEngine {
       quantity,
       orderType,
       fee,
+      isOpen: extras?.isOpen ?? true,
+      positionId: extras?.positionId,
+      entryPrice: extras?.entryPrice,
+      exitPrice: extras?.exitPrice,
+      pnl: extras?.pnl,
+      pnlBeforeFee: extras?.pnlBeforeFee,
     };
 
     this.trades.push(trade);
@@ -344,9 +380,10 @@ export class TradingEngineImpl implements TradingEngine {
     quantity: number,
     price: number,
     timestamp: string
-  ): void {
+  ): string {
     // 修改：总是创建新的独立持仓，允许同时持有多笔订单
     // 不自动合并或平仓，让用户手动管理持仓
-    this.positionManager.openPosition(side, quantity, price, timestamp);
+    const position = this.positionManager.openPosition(side, quantity, price, timestamp);
+    return position.id;
   }
 }

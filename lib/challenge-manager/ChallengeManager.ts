@@ -3,7 +3,7 @@
 import { PaulWeiTrade } from '@/types/paulWei';
 import { UserAccount } from '@/types/trading';
 import { createPaulWeiDataLoader, createOHLCVDataLoader } from '../data-loader';
-import { createComparisonAnalyzer } from '../comparison';
+import { getComparisonAnalyzer } from '../comparison';
 import { StorageManagerImpl } from '../storage/StorageManager';
 import { ChallengeValidatorImpl } from './ChallengeValidator';
 import {
@@ -18,7 +18,7 @@ export class ChallengeManagerImpl implements ChallengeManager {
   private activeChallenge: Challenge | null = null;
   private paulWeiDataLoader = createPaulWeiDataLoader();
   private ohlcvDataLoader = createOHLCVDataLoader();
-  private comparisonAnalyzer = createComparisonAnalyzer();
+  private comparisonAnalyzer = getComparisonAnalyzer();
   private storageManager = new StorageManagerImpl();
   private validator = new ChallengeValidatorImpl();
   private challengeCounter = 0;

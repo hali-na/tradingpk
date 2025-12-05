@@ -1,20 +1,33 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from 'next'
+import { Inter, JetBrains_Mono } from 'next/font/google'
+import './globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+})
 
 export const metadata: Metadata = {
   title: 'TradingPK - PK 顶级交易员',
   description: '与顶级交易员 paul wei 进行模拟交易 PK',
-};
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="zh-CN">
-      <body>{children}</body>
+    <html lang="zh-CN" className="dark">
+      <body className={`${inter.variable} ${jetbrainsMono.variable} overflow-y-auto`}>
+        {children}
+      </body>
     </html>
-  );
+  )
 }
 

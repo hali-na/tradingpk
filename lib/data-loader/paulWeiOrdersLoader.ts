@@ -68,7 +68,7 @@ export class PaulWeiOrdersLoader {
           skipEmptyLines: true,
           complete: (results) => {
             this.ordersCache = results.data
-              .map((row) => {
+              .map((row: any): PaulWeiOrder | null => {
                 // 转换 symbol
                 let symbol: 'XBTUSD' | 'ETHUSD' | null = null;
                 const symbolStr = String(row.symbol || '').toUpperCase();
@@ -111,6 +111,11 @@ export class PaulWeiOrdersLoader {
                   ordType = 'Stop';
                 }
 
+                // 如果symbol或side为null，返回null
+                if (!symbol || !side) {
+                  return null;
+                }
+
                 return {
                   orderID: row.orderID,
                   symbol,
@@ -125,7 +130,7 @@ export class PaulWeiOrdersLoader {
                   timestamp: row.timestamp,
                   text: row.text || '',
                   executions: [],
-                };
+                } as PaulWeiOrder;
               })
               .filter((order): order is PaulWeiOrder => order !== null);
 
@@ -155,7 +160,7 @@ export class PaulWeiOrdersLoader {
           skipEmptyLines: true,
           complete: (results) => {
             this.executionsCache = results.data
-              .map((row) => {
+                .map((row: any) => {
                 // 转换 symbol
                 let symbol: 'XBTUSD' | 'ETHUSD' | null = null;
                 const symbolStr = String(row.symbol || '').toUpperCase();
