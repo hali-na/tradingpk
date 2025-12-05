@@ -31,17 +31,28 @@ export class ComparisonAnalyzerImpl implements ComparisonAnalyzer {
     userAccount: UserAccount,
     paulWeiTrades: PaulWeiTrade[],
     currentPrice: number,
-    initialBalance: number
+    initialBalance: number,
+    startTime?: string,
+    currentTime?: string
   ): ComparisonMetrics {
     // 用户收益
     const userReturn = this.userPnLCalc.calculateUserReturn(userAccount, currentPrice);
     const userSummary = this.userPnLCalc.getUserPnLSummary(userAccount, currentPrice);
 
-    // paul wei 收益
-    const paulWeiSummary = this.paulWeiPnLCalc.getPaulWeiPnLSummary(
-      paulWeiTrades,
-      initialBalance
-    );
+    // paul wei 收益 - 优先使用 wallet history 计算真实收益
+    let paulWeiSummary;
+    if (startTime && currentTime && this.paulWeiPnLCalc.hasWalletHistory()) {
+      paulWeiSummary = this.paulWeiPnLCalc.calculateFromWalletHistory(
+        startTime,
+        currentTime,
+        currentPrice
+      );
+    } else {
+      paulWeiSummary = this.paulWeiPnLCalc.getPaulWeiPnLSummary(
+        paulWeiTrades,
+        initialBalance
+      );
+    }
 
     // 交易次数
     const userTradeCount = userAccount.trades.length;

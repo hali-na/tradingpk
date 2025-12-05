@@ -47,7 +47,9 @@ export interface ComparisonAnalyzer {
     userAccount: UserAccount,
     paulWeiTrades: PaulWeiTrade[],
     currentPrice: number,
-    initialBalance: number
+    initialBalance: number,
+    startTime?: string,
+    currentTime?: string
   ): ComparisonMetrics;
   
   generateInsights(metrics: ComparisonMetrics): string[];

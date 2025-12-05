@@ -13,7 +13,7 @@ interface TimeControllerProps {
   onSpeedChange: (speed: number) => void;
 }
 
-const speeds = [1, 2, 5, 10, 50, 100];
+const speeds = [1, 2, 5, 10, 50, 100, 300, 500, 800];
 
 export function TimeController({
   currentTime,

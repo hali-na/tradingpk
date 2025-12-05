@@ -22,7 +22,7 @@ export function useChallengeMetrics(isInitialized: boolean) {
     setComparisonMetrics,
   } = useChallengeStore();
 
-  const { currentTime } = useTimeSimulation();
+  const { currentTime, startTime } = useTimeSimulation();
   
   // 标记 analyzer 是否已初始化（wallet history 已加载）
   const [analyzerReady, setAnalyzerReady] = useState(false);
@@ -68,11 +68,14 @@ export function useChallengeMetrics(isInitialized: boolean) {
     metricsUpdateTimerRef.current = setTimeout(async () => {
       const analyzer = await getInitializedComparisonAnalyzer();
       // 使用过滤后的交易数据，只计算到当前模拟时间的收益
+      // 传递 startTime 和 currentTime 以便使用 wallet history 计算 Paul Wei 真实收益
       const metrics = analyzer.calculateMetrics(
         account,
         filteredPaulWeiTrades,
         currentPrice,
-        account.initialBalance
+        account.initialBalance,
+        startTime,
+        currentTime
       );
       setComparisonMetrics(metrics);
     }, 500);
