@@ -7,8 +7,8 @@
 - K 线与行情 CSV 托管在 Hugging Face Dataset：`(https://huggingface.co/datasets/geeksaywhat/paulweitrading/tree/main)`（git-xet/LFS 存大文件）。
 - 前端数据源通过环境变量配置：
   - `NEXT_PUBLIC_OHLCV_BASE`（部署必填）：
-    - 若 CSV 在数据集根目录：`https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main`
-    - 若在子目录 `ohlcv/`：`https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main/ohlcv`
+    - 若 CSV 在数据集根目录：`(https://huggingface.co/datasets/geeksaywhat/paulweitrading/tree/main)`
+    - 若在子目录 `ohlcv/`：`https://huggingface.co/datasets/geeksaywhat/paulweitrading/tree/main/ohlcv`
   - 本地开发不配置则默认读 `public/ohlcv/`。
 - Paul Wei 交易/钱包等 CSV 仍保留在仓库 `public/bitmex_paulwei/`，无需额外变量。
 - 如需把 Paul Wei 数据也改为外部源，可新增类似 `NEXT_PUBLIC_PAULWEI_BASE`（当前未启用）。
