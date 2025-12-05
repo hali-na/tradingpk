@@ -4,7 +4,7 @@
 
 ## 📦 数据托管与环境变量（必读）
 
-- K 线与行情 CSV 托管在 Hugging Face Dataset：`https://huggingface.co/datasets/geeksaywhat/paulweitrading`（git-xet/LFS 存大文件）。
+- K 线与行情 CSV 托管在 Hugging Face Dataset：`(https://huggingface.co/datasets/geeksaywhat/paulweitrading/tree/main)`（git-xet/LFS 存大文件）。
 - 前端数据源通过环境变量配置：
   - `NEXT_PUBLIC_OHLCV_BASE`（部署必填）：
     - 若 CSV 在数据集根目录：`https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main`
