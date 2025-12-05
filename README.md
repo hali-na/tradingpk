@@ -2,60 +2,16 @@
 
 一个让用户与顶级交易员 paul wei 进行模拟交易 PK 的平台。
 
-## 📋 项目状态
+## 📦 数据托管与环境变量（必读）
 
-### ✅ 已完成
-
-1. **项目初始化**
-   - Next.js 16 项目结构
-   - TypeScript 配置
-   - Tailwind CSS 配置
-   - 基础目录结构
-
-2. **阶段1 - 基础模块（已完成）**
-   - ✅ 数据加载模块 (`lib/data-loader/`)
-     - paul wei 交易数据加载器
-     - K线数据加载器
-     - 挑战数据处理器
-   - ✅ 时间模拟引擎 (`lib/time-simulation/`)
-     - 时间推进、暂停、加速功能
-     - 时间跳转功能
-   - ✅ 存储管理模块 (`lib/storage/`)
-     - LocalStorage 读写
-     - 挑战数据存储
-     - 挑战结果存储
-
-3. **类型定义**
-   - ✅ 全局类型定义 (`types/`)
-     - 通用类型
-     - 交易类型
-     - paul wei 数据类型
-     - 挑战类型
-     - K线数据类型
-     - 对比分析类型
-
-4. **基础页面**
-   - ✅ 首页布局
-   - ✅ 基础样式
-
-### 🚧 进行中
-
-- 基础组件和页面结构
-
-### 📝 待开发
-
-**阶段2 - 核心业务模块**
-- 交易引擎 (`lib/trading-engine/`)
-- 收益计算模块 (`lib/pnl-calculator/`)
-
-**阶段3 - 分析和 UI 模块**
-- 对比分析模块 (`lib/comparison/`)
-- K线图表模块 (`components/chart/`)
-- 挑战管理模块 (`lib/challenge-manager/`)
-
-**阶段4 - 集成和优化**
-- 页面开发 (`app/`)
-- 分享模块 (`lib/share/`)
+- K 线与行情 CSV 托管在 Hugging Face Dataset：`https://huggingface.co/datasets/geeksaywhat/paulweitrading`（git-xet/LFS 存大文件）。
+- 前端数据源通过环境变量配置：
+  - `NEXT_PUBLIC_OHLCV_BASE`（部署必填）：
+    - 若 CSV 在数据集根目录：`https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main`
+    - 若在子目录 `ohlcv/`：`https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main/ohlcv`
+  - 本地开发不配置则默认读 `public/ohlcv/`。
+- Paul Wei 交易/钱包等 CSV 仍保留在仓库 `public/bitmex_paulwei/`，无需额外变量。
+- 如需把 Paul Wei 数据也改为外部源，可新增类似 `NEXT_PUBLIC_PAULWEI_BASE`（当前未启用）。
 
 ## 🚀 快速开始
 
@@ -81,6 +37,16 @@ npm run build
 
 ```bash
 npm start
+```
+
+### 环境变量示例
+
+```
+# HF 根目录方案（当前推荐）
+NEXT_PUBLIC_OHLCV_BASE=https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main
+
+# 若 CSV 放在 ohlcv/ 子目录，则改为
+# NEXT_PUBLIC_OHLCV_BASE=https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main/ohlcv
 ```
 
 ## 📁 项目结构
