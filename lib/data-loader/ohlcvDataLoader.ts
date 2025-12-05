@@ -6,8 +6,8 @@ import { Symbol, Timeframe } from '@/types/common';
 import { OHLCVData, OHLCVDataset } from '@/types/ohlcv';
 import { DataLoader } from './types';
 
-// Hugging Face 数据集 URL
-const HF_BASE_URL = 'https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main/ohlcv';
+// Hugging Face 数据集 URL - 文件直接在根目录，不在 ohlcv 子目录
+const HF_BASE_URL = 'https://huggingface.co/datasets/geeksaywhat/paulweitrading/resolve/main';
 
 type CachedRange = {
   start: number;
