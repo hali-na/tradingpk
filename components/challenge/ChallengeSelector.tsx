@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { PaulWeiDataLoader } from '@/lib/data-loader/paulWeiDataLoader';
 import { HighlightMoments, HighlightMoment } from './HighlightMoments';
+import { SparklesIcon, TargetIcon, TrendingUpIcon, CalendarIcon, DollarSignIcon } from '@/components/common/icons';
 
 type ChallengeMode = 'highlight' | 'custom';
 
@@ -115,7 +116,7 @@ export function ChallengeSelector({ onCreateChallenge, isLoading }: ChallengeSel
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl text-primary">✨</span>
+                  <SparklesIcon className="w-6 h-6" />
                   <span className="font-semibold text-lg text-foreground">高光时刻</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -136,7 +137,7 @@ export function ChallengeSelector({ onCreateChallenge, isLoading }: ChallengeSel
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl text-primary">🎯</span>
+                  <TargetIcon className="w-6 h-6" />
                   <span className="font-semibold text-lg text-foreground">自定义挑战</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -241,13 +242,13 @@ export function ChallengeSelector({ onCreateChallenge, isLoading }: ChallengeSel
             <>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-primary">📈</span>
+                  <TrendingUpIcon className="w-4 h-4" />
                   <span className="text-sm text-foreground">
                     <span className="font-mono font-semibold">{tradeCount}</span> 笔交易
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-primary">📅</span>
+                  <CalendarIcon className="w-4 h-4" />
                   <span className="text-sm text-foreground">
                     <span className="font-mono font-semibold">{tradeDates.size}</span> 天
                   </span>
@@ -270,7 +271,7 @@ export function ChallengeSelector({ onCreateChallenge, isLoading }: ChallengeSel
 
         {/* 挑战信息 */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="text-primary">💰</span>
+          <DollarSignIcon className="w-4 h-4" />
           <span>初始资金 $10,000 USD</span>
         </div>
 

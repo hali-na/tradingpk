@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Symbol } from '@/types/common';
 import { ChallengeSelector } from '@/components/challenge/ChallengeSelector';
+import { CalendarIcon, ChartIcon, TrophyIcon } from '@/components/common/icons';
 
 export default function HomePage() {
   const router = useRouter();
@@ -172,19 +173,19 @@ export default function HomePage() {
                 step: '01',
                 title: '选择战役',
                 desc: '挑选一个历史时间段，可以是 312 暴跌、519 崩盘，或任意你感兴趣的日期。',
-                icon: '📅',
+                IconComponent: CalendarIcon,
               },
               {
                 step: '02',
                 title: '实时交易',
                 desc: '在真实历史 K 线上下单，系统会同步展示 Paul Wei 当时的操作与收益。',
-                icon: '📈',
+                IconComponent: ChartIcon,
               },
               {
                 step: '03',
                 title: '对比结算',
                 desc: '挑战结束后，系统自动计算双方收益率、胜率等指标，给出胜负判定。',
-                icon: '🏆',
+                IconComponent: TrophyIcon,
               },
             ].map((item, i) => (
               <div
@@ -192,7 +193,9 @@ export default function HomePage() {
                 className="glass-card p-8 rounded-2xl border border-primary/20 hover:border-primary/50 transition-all duration-300 group"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <span className="text-4xl">{item.icon}</span>
+                  <span className="text-4xl">
+                    <item.IconComponent />
+                  </span>
                   <span className="text-5xl font-black text-primary/20 group-hover:text-primary/40 transition-colors">
                     {item.step}
                   </span>
