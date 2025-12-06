@@ -12,6 +12,7 @@ import { useChallengeStore } from '@/stores/challengeStore';
 import { useTradingStore } from '@/stores/tradingStore';
 import { useTimeSimulation } from '@/hooks/useTimeSimulation';
 import { useTrading } from '@/hooks/useTrading';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type PaulWeiViewMode = 'off' | 'trades' | 'orders' | 'all';
 
@@ -84,9 +85,33 @@ export function ChallengeLayout({
               </div>
             </div>
           </div>
+          {/* 状态栏 */}
+          <div className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2 text-xs text-muted-foreground">
+            <div className="glass-card px-3 py-2 rounded-lg border border-primary/20">
+              <div className="font-medium text-foreground">当前时间</div>
+              <div className="font-mono text-sm text-primary truncate">{currentTime || '--'}</div>
+            </div>
+            <div className="glass-card px-3 py-2 rounded-lg border border-primary/20">
+              <div className="font-medium text-foreground">速度</div>
+              <div className="font-mono text-sm">{speed}x {isPaused ? '(暂停)' : '(播放中)'}</div>
+            </div>
+            <div className="glass-card px-3 py-2 rounded-lg border border-primary/20">
+              <div className="font-medium text-foreground">进度</div>
+              <div className="font-mono text-sm">{getProgress().toFixed(1)}%</div>
+            </div>
+            <div className="glass-card px-3 py-2 rounded-lg border border-primary/20">
+              <div className="font-medium text-foreground">剩余</div>
+              <div className="font-mono text-sm">{formatRemainingTime()}</div>
+            </div>
+          </div>
         </div>
 
         <div className="glass-card p-4 rounded-xl flex-grow min-h-0 relative overflow-hidden">
+          {currentTimeframe === '1m' && currentOHLCV.length === 0 && (
+            <div className="mb-3 text-xs text-muted-foreground">
+              1m 数据加载中，文件较大，稍后自动显示。
+            </div>
+          )}
           <KLineChart
             data={currentOHLCV}
             paulWeiTrades={paulWeiTrades}
@@ -118,37 +143,50 @@ export function ChallengeLayout({
         </div>
       </div>
 
-      {/* 右侧：交易面板和对比，独立滚动 */}
-      <div className="col-span-4 h-full overflow-y-auto space-y-4 rounded-xl glass-card p-4">
-        <TradingPanel
-          currentPrice={currentPrice}
-          balance={balance}
-          symbol={currentChallenge?.symbol || 'XBTUSD'}
-          positions={positions}
-          orders={orders}
-          trades={trades}
-          onPlaceOrder={onPlaceOrder}
-          onPlaceLadderOrders={onPlaceLadderOrders}
-          onClosePosition={onClosePosition}
-          onCloseAll={onCloseAll}
-          onCancelOrder={onCancelOrder}
-        />
-        
-        <ComparisonPanel metrics={comparisonMetrics} />
-        
-        {currentChallenge && (
-          <PaulWeiTradeHistory
-            startTime={currentChallenge.startTime}
-            endTime={currentTime || currentChallenge.endTime}
-            symbol={currentChallenge.symbol}
-          />
-        )}
-        
-        <PaulWeiStrategyPanel
-          orders={paulWeiOrders}
-          trades={paulWeiTrades}
-          currentTime={currentTime}
-        />
+      {/* 右侧：分 Tab，交易/对比为主，Paul Wei 信息折叠 */}
+      <div className="col-span-4 h-full overflow-y-auto space-y-4">
+        <Tabs defaultValue="trade" className="glass-card rounded-xl p-3">
+          <TabsList className="grid grid-cols-3 gap-1 glass-card border border-primary/30">
+            <TabsTrigger value="trade">交易</TabsTrigger>
+            <TabsTrigger value="compare">对比</TabsTrigger>
+            <TabsTrigger value="paul">Paul Wei</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="trade" className="space-y-4 p-2">
+            <TradingPanel
+              currentPrice={currentPrice}
+              balance={balance}
+              symbol={currentChallenge?.symbol || 'XBTUSD'}
+              positions={positions}
+              orders={orders}
+              trades={trades}
+              onPlaceOrder={onPlaceOrder}
+              onPlaceLadderOrders={onPlaceLadderOrders}
+              onClosePosition={onClosePosition}
+              onCloseAll={onCloseAll}
+              onCancelOrder={onCancelOrder}
+            />
+          </TabsContent>
+
+          <TabsContent value="compare" className="space-y-4 p-2">
+            <ComparisonPanel metrics={comparisonMetrics} />
+          </TabsContent>
+
+          <TabsContent value="paul" className="space-y-4 p-2">
+            {currentChallenge && (
+              <PaulWeiTradeHistory
+                startTime={currentChallenge.startTime}
+                endTime={currentTime || currentChallenge.endTime}
+                symbol={currentChallenge.symbol}
+              />
+            )}
+            <PaulWeiStrategyPanel
+              orders={paulWeiOrders}
+              trades={paulWeiTrades}
+              currentTime={currentTime}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
