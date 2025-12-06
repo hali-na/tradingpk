@@ -122,7 +122,7 @@ export function useChallengeInit(challengeId: string): UseChallengeInitResult {
         });
 
         // 获取挑战开始时的价格（用于计算 Paul Wei 的初始本金）
-        const startPriceCandle = realOHLCV['1h'].find(
+        const startPriceCandle = data1h.find(
           (c) => new Date(c.timestamp).getTime() >= new Date(startTime).getTime()
         );
         const startPrice = startPriceCandle?.open || 10000;
