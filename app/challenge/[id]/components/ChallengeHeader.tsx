@@ -36,7 +36,7 @@ export function ChallengeHeader({ onEndChallenge }: ChallengeHeaderProps) {
         </span>
       </div>
       <div className="flex items-center gap-6">
-        <div className="text-sm text-right glass-card px-3 py-2 rounded-lg border border-primary/40 shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
+        <div className="text-sm text-right px-3 py-2 rounded-lg border border-primary/60 bg-primary/10 shadow-[0_0_16px_hsl(var(--primary)/0.45)]">
           <div>
             <span className="text-muted-foreground">权益: </span>
             <span className="font-mono font-semibold text-lg text-primary">
@@ -51,7 +51,7 @@ export function ChallengeHeader({ onEndChallenge }: ChallengeHeaderProps) {
           variant="primary"
           size="sm"
           onClick={onEndChallenge}
-          className="shadow-[0_0_12px_hsl(var(--primary))] hover:shadow-[0_0_20px_hsl(var(--primary))] border border-primary/50"
+          className="shadow-[0_0_14px_hsl(var(--primary))] hover:shadow-[0_0_22px_hsl(var(--primary))] border border-primary/60"
         >
           结束挑战
         </Button>
