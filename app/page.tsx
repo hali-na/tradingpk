@@ -99,7 +99,7 @@ export default function HomePage() {
                   <p className="text-xs text-muted-foreground mt-1">经典战役可选</p>
                 </div>
                 <div className="glass-card p-4 rounded-xl border-l-4 border-cyan-400 min-w-[120px]">
-                  <p className="text-3xl font-black font-mono text-cyan-400">2年+</p>
+                  <p className="text-3xl font-black font-mono text-cyan-400">5年+</p>
                   <p className="text-xs text-muted-foreground mt-1">历史行情数据</p>
                 </div>
                 <div className="glass-card p-4 rounded-xl border-l-4 border-green-400 min-w-[120px]">
