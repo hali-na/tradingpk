@@ -21,10 +21,11 @@ function getThemeColors() {
   return {
     textColor: '#888888',
     borderColor: '#333333',
-    primaryColor: '#3b82f6',  // blue
+    // 品牌色：买入/Paul Wei 标记
+    primaryColor: '#f472b6',  // pink
     profitColor: '#22c55e',   // green - 上涨
     lossColor: '#ef4444',     // red - 下跌
-    accentColor: '#8b5cf6',   // purple
+    accentColor: '#a855f7',   // purple - 卖出/辅助
     cyanColor: '#06b6d4',     // cyan - 用户交易
   };
 }
@@ -732,11 +733,11 @@ export function KLineChart({
           {(paulWeiViewMode === 'trades' || paulWeiViewMode === 'all') && (
             <>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full" style={{backgroundColor: 'hsl(var(--primary))'}}></span>
+                <span className="w-2 h-2 rounded-full" style={{backgroundColor: getThemeColors().primaryColor}}></span>
                 <span className="text-muted-foreground">买入</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full" style={{backgroundColor: 'hsl(var(--accent))'}}></span>
+                <span className="w-2 h-2 rounded-full" style={{backgroundColor: getThemeColors().accentColor}}></span>
                 <span className="text-muted-foreground">卖出</span>
               </div>
             </>
