@@ -112,9 +112,10 @@ export default function ChallengePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4 animate-spin" style={{ filter: 'drop-shadow(0 0 10px hsl(var(--primary)))' }}></div>
+        <div className="text-center space-y-2">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2 animate-spin" style={{ filter: 'drop-shadow(0 0 10px hsl(var(--primary)))' }}></div>
           <p className="text-muted-foreground">正在初始化挑战...</p>
+          <p className="text-xs text-muted-foreground">数据较大，首次加载可能需要约 60 秒，请耐心等待。</p>
         </div>
       </div>
     );
@@ -140,9 +141,10 @@ export default function ChallengePage() {
   if (!isInitialized) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4 animate-spin" style={{ filter: 'drop-shadow(0 0 10px hsl(var(--primary)))' }}></div>
+        <div className="text-center space-y-2">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2 animate-spin" style={{ filter: 'drop-shadow(0 0 10px hsl(var(--primary)))' }}></div>
           <p className="text-muted-foreground">正在加载挑战数据...</p>
+          <p className="text-xs text-muted-foreground">数据较大，首次加载可能需要约 60 秒，请耐心等待。</p>
         </div>
       </div>
     );

@@ -36,18 +36,23 @@ export function ChallengeHeader({ onEndChallenge }: ChallengeHeaderProps) {
         </span>
       </div>
       <div className="flex items-center gap-6">
-        <div className="text-sm text-right">
+        <div className="text-sm text-right glass-card px-3 py-2 rounded-lg border border-primary/40 shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
           <div>
             <span className="text-muted-foreground">权益: </span>
-            <span className="font-mono font-semibold text-lg text-foreground">
+            <span className="font-mono font-semibold text-lg text-primary">
               ${displayEquity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
           <div className="text-xs text-muted-foreground">
-            可用: <span className="font-mono">${displayBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            可用: <span className="font-mono text-foreground">${displayBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
         </div>
-        <Button variant="danger" size="sm" onClick={onEndChallenge} className="shadow-[0_0_10px_hsl(var(--destructive))] hover:shadow-[0_0_20px_hsl(var(--destructive))] transition-all">
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={onEndChallenge}
+          className="shadow-[0_0_12px_hsl(var(--primary))] hover:shadow-[0_0_20px_hsl(var(--primary))] border border-primary/50"
+        >
           结束挑战
         </Button>
       </div>
