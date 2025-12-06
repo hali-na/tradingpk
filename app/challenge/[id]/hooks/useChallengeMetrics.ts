@@ -40,6 +40,11 @@ export function useChallengeMetrics(isInitialized: boolean) {
     return isInitialized && account && ohlcvData && analyzerReady;
   }, [isInitialized, account, ohlcvData, analyzerReady]);
 
+  // 追踪账户内的交易/订单/持仓变化以触发刷新
+  const accountTradesCount = account?.trades?.length ?? 0;
+  const accountOrdersCount = account?.orders?.length ?? 0;
+  const accountPositionsCount = account?.positions?.length ?? 0;
+
   // 指标更新节流定时器
   const metricsUpdateTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -57,7 +62,7 @@ export function useChallengeMetrics(isInitialized: boolean) {
   useEffect(() => {
     // 只要有账户和基础数据，就更新对比指标；
     // 即使当前时间段内没有 PaulWei 交易，也可以进行对比（PaulWei 视为 0 表现）。
-    if (!shouldUpdate || !account || currentPrice <= 0) return;
+    if (!shouldUpdate || !account) return;
 
     // 清除之前的定时器
     if (metricsUpdateTimerRef.current) {
@@ -85,6 +90,16 @@ export function useChallengeMetrics(isInitialized: boolean) {
         clearTimeout(metricsUpdateTimerRef.current);
       }
     };
-  }, [currentTime, account, filteredPaulWeiTrades, shouldUpdate, currentPrice, setComparisonMetrics]);
+  }, [
+    currentTime,
+    account,
+    filteredPaulWeiTrades,
+    shouldUpdate,
+    currentPrice,
+    setComparisonMetrics,
+    accountTradesCount,
+    accountOrdersCount,
+    accountPositionsCount,
+  ]);
 }
 

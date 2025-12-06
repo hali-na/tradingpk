@@ -82,24 +82,43 @@ export function useChallengeInit(challengeId: string): UseChallengeInitResult {
 
         setCurrentChallenge(mockChallenge);
         
-        // 加载真实K线数据（包含开始时间前7天的历史数据）
+        // 加载真实K线数据（先加载轻量周期，首屏更快；再懒加载 1m）
         const historyStartTime = new Date(
           new Date(startTime).getTime() - 7 * 24 * 60 * 60 * 1000
         ).toISOString();
         
         const ohlcvLoader = getOHLCVDataLoader();
-        const realOHLCV = await ohlcvLoader.loadAllTimeframes(
-          symbol,
-          historyStartTime,
-          endTime
-        );
-        setOHLCVData(realOHLCV);
+
+        // 1) 先加载 5m/1h/1d，快速展示
+        const [data5m, data1h, data1d] = await Promise.all([
+          ohlcvLoader.loadOHLCV(symbol, '5m', historyStartTime, endTime),
+          ohlcvLoader.loadOHLCV(symbol, '1h', historyStartTime, endTime),
+          ohlcvLoader.loadOHLCV(symbol, '1d', historyStartTime, endTime),
+        ]);
+
+        // 先放一个占位 1m（空数组），让 UI 先渲染
+        setOHLCVData({
+          '1m': [],
+          '5m': data5m,
+          '1h': data1h,
+          '1d': data1d,
+        });
+
+        // 2) 再懒加载 1m，加载完再更新
+        const data1m = await ohlcvLoader.loadOHLCV(symbol, '1m', historyStartTime, endTime);
+
+        setOHLCVData({
+          '1m': data1m,
+          '5m': data5m,
+          '1h': data1h,
+          '1d': data1d,
+        });
         
         console.log('Loaded real OHLCV data:', {
-          '1m': realOHLCV['1m'].length,
-          '5m': realOHLCV['5m'].length,
-          '1h': realOHLCV['1h'].length,
-          '1d': realOHLCV['1d'].length,
+          '1m': data1m.length,
+          '5m': data5m.length,
+          '1h': data1h.length,
+          '1d': data1d.length,
         });
 
         // 获取挑战开始时的价格（用于计算 Paul Wei 的初始本金）
