@@ -9,6 +9,7 @@ import { ComparisonMetrics } from '@/lib/comparison/types';
 import { PaulWeiOrder } from '@/lib/data-loader/paulWeiOrdersLoader';
 import { PaulWeiOrdersLoader } from '@/lib/data-loader/paulWeiOrdersLoader';
 import { PaulWeiDataLoader } from '@/lib/data-loader/paulWeiDataLoader';
+import { getOHLCVDataLoader } from '@/lib/data-loader/ohlcvDataLoader';
 
 interface ChallengeStore {
   // 当前挑战
@@ -33,7 +34,7 @@ interface ChallengeStore {
   setPaulWeiTrades: (trades: PaulWeiTrade[]) => void;
   setPaulWeiOrders: (orders: PaulWeiOrder[]) => void;
   setOHLCVData: (data: OHLCVDataset) => void;
-  setCurrentTimeframe: (timeframe: '1m' | '5m' | '1h' | '1d') => void;
+  setCurrentTimeframe: (timeframe: '1m' | '5m' | '1h' | '1d') => Promise<void>;
   setComparisonMetrics: (metrics: ComparisonMetrics) => void;
   loadPaulWeiOrders: (startTime: string, endTime: string, symbol?: Symbol) => Promise<void>;
   loadPaulWeiTrades: (startTime: string, endTime: string) => Promise<void>;
@@ -107,7 +108,31 @@ export const useChallengeStore = create<ChallengeStore>((set, get) => ({
     set({ ohlcvData: data });
   },
 
-  setCurrentTimeframe: (timeframe: '1m' | '5m' | '1h' | '1d') => {
+  setCurrentTimeframe: async (timeframe: '1m' | '5m' | '1h' | '1d') => {
+    // 按需懒加载 1m，避免首屏拉大文件
+    if (timeframe === '1m') {
+      const state = get();
+      const has1m = state.ohlcvData?.['1m']?.length;
+      if (!has1m && state.currentChallenge) {
+        const { startTime, endTime, symbol } = state.currentChallenge;
+        const historyStartTime = new Date(
+          new Date(startTime).getTime() - 7 * 24 * 60 * 60 * 1000
+        ).toISOString();
+        try {
+          const loader = getOHLCVDataLoader();
+          const data1m = await loader.loadOHLCV(symbol, '1m', historyStartTime, endTime);
+          const prev = get().ohlcvData || { '5m': [], '1h': [], '1d': [], '1m': [] };
+          set({
+            ohlcvData: {
+              ...prev,
+              '1m': data1m,
+            },
+          });
+        } catch (e) {
+          console.error('懒加载 1m K 线失败:', e);
+        }
+      }
+    }
     set({ currentTimeframe: timeframe });
   },
 
